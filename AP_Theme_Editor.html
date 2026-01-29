@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniWorld Theme Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #0a0a12 0%, #1a1a2e 50%, #0a0a12 100%); min-height: 100vh; color: #e0e0e0; }
+        .app-container { display: flex; min-height: 100vh; }
+        .editor-panel { width: 480px; min-width: 480px; background: #0d0d14; border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; height: 100vh; }
+        .editor-header { padding: 20px 24px; background: linear-gradient(180deg, #12121a 0%, #0d0d14 100%); border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .editor-header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, #ff3366, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .editor-header p { font-size: 13px; color: #888; margin-top: 4px; }
+        .editor-content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+        .editor-section { margin-bottom: 24px; }
+        .editor-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .editor-section-title i { color: #ff3366; }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 12px; color: #999; margin-bottom: 6px; }
+        .input-group input[type="text"], .input-group select { width: 100%; padding: 10px 12px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f0f0f5; font-size: 13px; }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: #ff3366; }
+        .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .color-input-group { background: #12121a; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
+        .color-input-group label { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; color: #ccc; }
+        .color-input-group input[type="color"] { width: 24px; height: 24px; border: none; border-radius: 4px; cursor: pointer; background: transparent; }
+        .color-input-group input[type="text"] { width: 100%; padding: 6px 8px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; color: #f0f0f5; font-size: 11px; font-family: monospace; }
+        .shimmer-preview { height: 4px; border-radius: 2px; margin-top: 10px; background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        @keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .animation-toggle { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #12121a; border-radius: 8px; margin-bottom: 10px; }
+        .animation-toggle span { font-size: 12px; color: #ccc; }
+        .toggle-switch { position: relative; width: 40px; height: 22px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #2a2a35; border-radius: 22px; transition: 0.3s; }
+        .toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch input:checked + .toggle-slider { background: linear-gradient(135deg, #ff3366, #7c3aed); }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(18px); }
+        .bg-container { background: #12121a; padding: 12px; border-radius: 8px; }
+        .bg-preview { width: 100%; height: 80px; background: #1a1a25; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 2px dashed rgba(255,255,255,0.1); margin-bottom: 12px; overflow: hidden; }
+        .bg-preview.has-img { border-style: solid; border-color: #ff336650; }
+        .bg-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .bg-preview .placeholder { color: #555; font-size: 12px; }
+        .bg-controls { display: flex; gap: 8px; margin-bottom: 12px; }
+        .slider-input { width: 100%; height: 6px; background: #1a1a25; border-radius: 3px; -webkit-appearance: none; margin: 8px 0; }
+        .slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: linear-gradient(135deg, #ff3366, #7c3aed); border-radius: 50%; cursor: pointer; }
+        .layout-box { background: #12121a; padding: 12px; border-radius: 8px; }
+        .layout-tabs-row { display: flex; gap: 12px; }
+        .layout-column { flex: 1; }
+        .layout-column-header { font-size: 11px; font-weight: 600; color: #ff3366; margin-bottom: 8px; padding: 6px 10px; background: rgba(255,51,102,0.1); border-radius: 6px; text-align: center; }
+        .layout-zone { min-height: 120px; background: #1a1a25; border: 2px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 6px; }
+        .layout-zone.drag-over { border-color: #ff3366; background: rgba(255,51,102,0.05); }
+        .layout-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #0d0d14; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; margin-bottom: 4px; font-size: 11px; color: #ccc; user-select: none; }
+        .layout-item:last-child { margin-bottom: 0; }
+        .layout-item:hover { border-color: #ff3366; }
+        .layout-item i.icon { color: #ff3366; font-size: 10px; width: 14px; }
+        .layout-item .move-btns { margin-left: auto; display: flex; gap: 2px; }
+        .layout-item .move-btn { width: 22px; height: 22px; border: none; background: #1a1a25; border-radius: 4px; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .layout-item .move-btn:hover { background: #ff3366; color: white; }
+        .editor-actions { padding: 16px 24px; background: #0d0d14; border-top: 1px solid rgba(255,255,255,0.06); display: flex; gap: 10px; }
+        .btn { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; border: none; }
+        .btn-primary { background: linear-gradient(135deg, #ff3366, #7c3aed); color: white; flex: 1; }
+        .btn-secondary { background: #1a1a25; border: 1px solid rgba(255,255,255,0.1); color: #aaa; }
+        .preview-panel { flex: 1; padding: 40px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
+        .preview-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 20px; }
+        .preview-wrapper { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+        .preview-box { width: 420px; border-radius: var(--br, 16px); overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); background: var(--bg1, #0a0a0f); color: var(--txt1, #f0f0f5); position: relative; font-family: var(--ff, 'Space Grotesk', sans-serif); }
+        .preview-bg { position: absolute; inset: 0; background-size: cover; background-position: center; pointer-events: none; z-index: 0; display: none; }
+        .preview-box.has-glow::before { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, var(--glow1) 0%, transparent 60%); pointer-events: none; }
+        .preview-box.has-glow::after { content: ''; position: absolute; bottom: -30%; left: -30%; width: 80%; height: 80%; background: radial-gradient(circle, var(--glow2) 0%, transparent 50%); pointer-events: none; }
+        .p-header { position: relative; background: var(--bg2, #12121a); padding: 10px 12px; border-bottom: 1px solid var(--brd, rgba(255,255,255,0.06)); display: flex; align-items: center; gap: 10px; z-index: 1; }
+        .p-header.shimmer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        .p-logo { position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+        .p-logo-ring { position: absolute; inset: 0; border-radius: 12px; background: linear-gradient(135deg, var(--acc1, #ff3366), var(--acc2, #7c3aed)); opacity: 0.2; }
+        .p-logo-ring.pulse { animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.05); opacity: 0.3; } }
+        .p-logo-icon { position: relative; width: 32px; height: 32px; background: linear-gradient(135deg, var(--acc1, #ff3366), var(--acc2, #7c3aed)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
+        .p-header-text h2 { font-size: 14px; font-weight: 600; }
+        .p-header-text h2 .w { color: #ff3366; }
+        .p-header-text h2 .s { color: #44adf3; }
+        .p-header-text h2 .a { color: var(--txt2, #a0a0b8); font-weight: 400; font-size: 12px; }
+        .p-header-text .tag { font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--txt3, #9090a8); }
+        .p-close { margin-left: auto; width: 26px; height: 26px; border: none; background: var(--bg3, #1a1a25); border-radius: 6px; color: var(--txt2, #a0a0b8); cursor: pointer; }
+        .p-tabs { display: flex; background: var(--bg2, #12121a); border-bottom: 1px solid var(--brd); z-index: 1; position: relative; }
+        .p-tab { flex: 1; padding: 10px; background: none; border: none; color: var(--txt2); font-size: 12px; font-weight: 500; cursor: pointer; position: relative; }
+        .p-tab.active { color: var(--acc1, #ff3366); }
+        .p-tab.active::after { content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 2px; background: var(--acc1); border-radius: 2px 2px 0 0; }
+        .p-content { padding: 10px 12px; max-height: 300px; overflow-y: auto; z-index: 1; position: relative; }
+        .p-section { margin-bottom: 10px; }
+        .p-section.anim { animation: fadeIn 0.4s ease forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .p-sec-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+        .p-sec-icon { width: 20px; height: 20px; border-radius: 5px; background: var(--bg3); border: 1px solid var(--brd); display: flex; align-items: center; justify-content: center; }
+        .p-sec-icon i { font-size: 10px; color: var(--acc1); }
+        .p-sec-title { font-size: 12px; font-weight: 600; }
+        .p-card { background: var(--bg2); border: 1px solid var(--brd); border-radius: 8px; padding: 12px; }
+        .p-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--brd); }
+        .p-row:last-child { border-bottom: none; }
+        .p-label { font-size: 12px; }
+        .p-desc { font-size: 10px; color: var(--txt3); }
+        .p-toggle { width: 36px; height: 20px; background: var(--green, #22c55e); border-radius: 20px; position: relative; }
+        .p-toggle::before { content: ''; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; }
+        .p-toggle.off { background: var(--bg3); }
+        .p-toggle.off::before { right: auto; left: 2px; }
+        .p-footer { padding: 10px 12px; background: var(--bg2); border-top: 1px solid var(--brd); display: flex; justify-content: space-between; align-items: center; z-index: 1; position: relative; }
+        .p-ver { font-size: 10px; color: var(--txt3); }
+        .p-apply { padding: 6px 14px; background: linear-gradient(135deg, var(--acc1), var(--acc2)); border: none; border-radius: 6px; color: white; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .submit-box { width: 360px; border-radius: var(--br, 16px); overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); background: var(--bg1, #0a0a0f); color: var(--txt1, #f0f0f5); font-family: var(--ff, 'Space Grotesk', sans-serif); }
+        .submit-header { position: relative; background: var(--bg2, #12121a); padding: 16px 18px; border-bottom: 1px solid var(--brd); display: flex; align-items: center; gap: 14px; }
+        .submit-header.shimmer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        .submit-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--acc1), var(--acc2)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
+        .submit-header-text h3 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+        .submit-header-text p { font-size: 12px; color: var(--txt2); }
+        .submit-content { padding: 20px 18px; }
+        .submit-field { margin-bottom: 16px; }
+        .submit-field label { display: block; font-size: 12px; color: var(--txt2); margin-bottom: 8px; }
+        .submit-field input { width: 100%; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--brd); border-radius: 8px; color: var(--txt1); font-size: 14px; }
+        .submit-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .submit-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
+        .submit-btn.cancel { background: var(--bg3); color: var(--txt2); }
+        .submit-btn.submit { background: linear-gradient(135deg, var(--acc1), var(--acc2)); color: white; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-box { background: #0d0d14; border-radius: 16px; width: 500px; max-width: 95vw; }
+        .modal-header { padding: 20px; background: #12121a; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 16px; }
+        .modal-close { width: 32px; height: 32px; border: none; background: #1a1a25; border-radius: 8px; color: #888; cursor: pointer; font-size: 18px; }
+        .modal-body { padding: 20px; }
+        .modal-body textarea { width: 100%; height: 180px; padding: 12px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f0f0f5; font-family: monospace; font-size: 12px; }
+        .modal-body p { font-size: 13px; color: #888; margin-bottom: 12px; }
+        .modal-footer { padding: 16px 20px; background: #12121a; border-top: 1px solid rgba(255,255,255,0.06); display: flex; gap: 12px; justify-content: flex-end; }
+        .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border-radius: 10px; font-size: 13px; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 1001; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        @media (max-width: 1200px) { .preview-wrapper { flex-direction: column; } }
+        @media (max-width: 900px) { .app-container { flex-direction: column; } .editor-panel { width: 100%; min-width: auto; height: auto; max-height: 50vh; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="editor-panel">
+            <div class="editor-header">
+                <h1>🎨 Theme Editor</h1>
+                <p>Create and customize themes for AniWorld Autoplay</p>
+            </div>
+            <div class="editor-content">
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-info-circle"></i> Basic Info</div>
+                    <div class="input-group">
+                        <label>Theme Name</label>
+                        <input type="text" id="themeName" value="Custom Theme">
+                    </div>
+                    <div class="input-group">
+                        <label>Base Template</label>
+                        <select id="baseTemplate">
+                            <option value="classic">Classic (Default)</option>
+                            <option value="aniworld">AniWorld</option>
+                            <option value="yellow">Yellow</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-palette"></i> Colors</div>
+                    <div class="color-grid" id="colorGrid"></div>
+                </div>
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-wand-magic-sparkles"></i> Shimmer Line Gradient</div>
+                    <div class="color-grid">
+                        <div class="color-input-group">
+                            <label><input type="color" id="color-shimmer1" value="#ff3366"> Gradient Start</label>
+                            <input type="text" id="text-shimmer1" value="#ff3366">
+                        </div>
+                        <div class="color-input-group">
+                            <label><input type="color" id="color-shimmer2" value="#7c3aed"> Gradient End</label>
+                            <input type="text" id="text-shimmer2" value="#7c3aed">
+                        </div>
+                    </div>
+                    <div class="shimmer-preview" id="shimmerPrev"></div>
+                </div>
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-image"></i> Background Image</div>
+                    <div class="bg-container">
+                        <div class="bg-preview" id="bgPreview"><span class="placeholder"><i class="fas fa-image"></i> No image</span></div>
+                        <div class="bg-controls">
+                            <input type="file" id="bgInput" accept="image/*" style="display:none">
+                            <button class="btn btn-secondary" id="selectImg" style="flex:1"><i class="fas fa-upload"></i> Select</button>
+                            <button class="btn btn-secondary" id="clearImg" style="display:none"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="input-group">
+                            <label>Image URL</label>
+                            <input type="text" id="bgUrl" placeholder="https://...">
+                        </div>
+                        <div class="input-group">
+                            <label>Opacity: <span id="opacityVal">15%</span></label>
+                            <input type="range" id="bgOpacity" min="0" max="100" value="15" class="slider-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-sliders-h"></i> Style</div>
+                    <div class="input-group">
+                        <label>Border Radius</label>
+                        <input type="text" id="borderRadius" value="16px">
+                    </div>
+                    <div class="input-group">
+                        <label>Font Family</label>
+                        <input type="text" id="fontFamily" value="'Space Grotesk', -apple-system, sans-serif">
+                    </div>
+                </div>
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-magic"></i> Animations</div>
+                    <div id="animToggles"></div>
+                </div>
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-layer-group"></i> Settings Layout</div>
+                    <p style="font-size:11px;color:#666;margin-bottom:12px">Use arrows to move items up/down or between tabs</p>
+                    <div class="layout-box">
+                        <div class="layout-tabs-row">
+                            <div class="layout-column">
+                                <div class="layout-column-header">Preferences Tab</div>
+                                <div class="layout-zone" id="prefsZone"></div>
+                            </div>
+                            <div class="layout-column">
+                                <div class="layout-column-header">Advanced Tab</div>
+                                <div class="layout-zone" id="advZone"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button class="btn btn-secondary" onclick="importTheme()"><i class="fas fa-file-import"></i> Import</button>
+                <button class="btn btn-secondary" onclick="exportTheme()"><i class="fas fa-file-export"></i> Export</button>
+                <button class="btn btn-primary" onclick="copyCode()"><i class="fas fa-copy"></i> Copy Code</button>
+            </div>
+        </div>
+        <div class="preview-panel">
+            <div class="preview-title">Live Preview</div>
+            <div class="preview-wrapper">
+                <div class="preview-box has-glow" id="previewBox">
+                    <div class="preview-bg" id="previewBg"></div>
+                    <div class="p-header shimmer" id="pHeader">
+                        <div class="p-logo">
+                            <div class="p-logo-ring pulse" id="logoRing"></div>
+                            <div class="p-logo-icon">AP</div>
+                        </div>
+                        <div class="p-header-text">
+                            <h2>Ani<span class="w">World</span> & <span class="s">S</span>.to <span class="a">AP</span></h2>
+                            <div class="tag">SKIP INTROS & OUTROS</div>
+                        </div>
+                        <button class="p-close">×</button>
+                    </div>
+                    <div class="p-tabs">
+                        <button class="p-tab active" data-t="prefs">Preferences</button>
+                        <button class="p-tab" data-t="adv">Advanced</button>
+                    </div>
+                    <div class="p-content">
+                        <div id="prefsContent"></div>
+                        <div id="advContent" style="display:none"></div>
+                    </div>
+                    <div class="p-footer">
+                        <div class="p-ver">v4.13.1</div>
+                        <button class="p-apply">Apply</button>
+                    </div>
+                </div>
+                <div class="submit-box" id="submitBox">
+                    <div class="submit-header shimmer" id="submitHeader">
+                        <div class="submit-icon"><i class="fas fa-upload"></i></div>
+                        <div class="submit-header-text">
+                            <h3>Submit Intro Times</h3>
+                            <p>Help the community!</p>
+                        </div>
+                    </div>
+                    <div class="submit-content">
+                        <div class="submit-field">
+                            <label>Intro Start (seconds)</label>
+                            <input type="text" value="0:00" readonly>
+                        </div>
+                        <div class="submit-field">
+                            <label>Intro End (seconds)</label>
+                            <input type="text" value="1:30" readonly>
+                        </div>
+                        <div class="submit-buttons">
+                            <button class="submit-btn cancel">Cancel</button>
+                            <button class="submit-btn submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="importModal">
+        <div class="modal-box">
+            <div class="modal-header"><h3>Import Theme</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+            <div class="modal-body"><p>Paste theme JSON:</p><textarea id="importData"></textarea></div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="doImport()"><i class="fas fa-check"></i> Import</button></div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+<script>
+const THEMES = {
+    classic: { name: 'Classic', vars: { bgPrimary: '#0a0a0f', bgSecondary: '#12121a', bgTertiary: '#1a1a25', bgHover: 'rgba(255,255,255,0.02)', accentPrimary: '#ff3366', accentSecondary: '#7c3aed', accentGreen: '#22c55e', textPrimary: '#f0f0f5', textSecondary: '#a0a0b8', textMuted: '#9090a8', borderColor: 'rgba(255,255,255,0.06)', borderLight: 'rgba(255,255,255,0.1)', borderRadius: '16px', fontFamily: "'Space Grotesk',-apple-system,sans-serif", shimmerColor1: '#ff3366', shimmerColor2: '#7c3aed' }, animations: { shimmer: true, pulse: true, glow: true, sections: true } },
+    aniworld: { name: 'AniWorld', vars: { bgPrimary: '#121c22', bgSecondary: '#1a2a33', bgTertiary: '#243743', bgHover: '#2d444f', accentPrimary: '#637cf9', accentSecondary: '#637cf9', accentGreen: '#63d02b', textPrimary: '#e8e8e8', textSecondary: '#c0d4de', textMuted: '#a8c0cc', borderColor: '#2d444f', borderLight: '#3a5565', borderRadius: '12px', fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", shimmerColor1: '#637cf9', shimmerColor2: '#637cf9' }, animations: { shimmer: false, pulse: false, glow: false, sections: false } },
+    yellow: { name: 'Yellow', vars: { bgPrimary: '#2d2a2e', bgSecondary: '#221f22', bgTertiary: '#403e41', bgHover: '#5b595c', accentPrimary: '#ffd866', accentSecondary: '#fc9867', accentGreen: '#a9dc76', textPrimary: '#fcfcfa', textSecondary: '#c1c0c0', textMuted: '#939293', borderColor: '#403e41', borderLight: '#5b595c', borderRadius: '8px', fontFamily: "'JetBrains Mono',monospace,sans-serif", shimmerColor1: '#ffd866', shimmerColor2: '#fc9867' }, animations: { shimmer: true, pulse: false, glow: true, sections: true } }
+};
+
+const colorFields = ['bgPrimary','bgSecondary','bgTertiary','bgHover','accentPrimary','accentSecondary','accentGreen','textPrimary','textSecondary','textMuted','borderColor','borderLight'];
+const colorLabels = { bgPrimary: 'Background', bgSecondary: 'Secondary BG', bgTertiary: 'Tertiary BG', bgHover: 'Hover BG', accentPrimary: 'Accent Primary', accentSecondary: 'Accent Secondary', accentGreen: 'Success/Toggle', textPrimary: 'Text Primary', textSecondary: 'Text Secondary', textMuted: 'Text Muted', borderColor: 'Border', borderLight: 'Border Light' };
+const allSettings = [
+    { id: 'skip', icon: 'clock', title: 'Skip Settings' },
+    { id: 'autoSkip', icon: 'forward', title: 'Auto Skip' },
+    { id: 'playback', icon: 'play', title: 'Playback' },
+    { id: 'display', icon: 'tv', title: 'Display' },
+    { id: 'appearance', icon: 'paint-brush', title: 'Appearance' },
+    { id: 'defaults', icon: 'sliders-h', title: 'Defaults' },
+    { id: 'hotkeys', icon: 'keyboard', title: 'Hotkeys' },
+    { id: 'aniskip', icon: 'magic', title: 'AniSkip' },
+    { id: 'timing', icon: 'clock', title: 'Timing' },
+    { id: 'behavior', icon: 'cog', title: 'Behavior' },
+    { id: 'network', icon: 'network-wired', title: 'Network' }
+];
+
+let layout = { prefs: ['skip','autoSkip','playback','display','appearance','defaults'], adv: ['hotkeys','aniskip','timing','behavior','network'] };
+let bgImage = { url: '', opacity: 15, size: 'cover' };
+
+function hexToRgba(h, a) { if (!h || !h.startsWith('#')) return h; const r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
+function isHex(s) { return /^#[0-9A-Fa-f]{6}$/.test(s); }
+function toast(m, e) { const t = document.getElementById('toast'); t.textContent = m; t.className = 'toast' + (e ? ' error' : '') + ' show'; setTimeout(() => t.classList.remove('show'), 3000); }
+
+function buildColorGrid() {
+    const g = document.getElementById('colorGrid');
+    g.innerHTML = '';
+    colorFields.forEach(f => {
+        const d = document.createElement('div');
+        d.className = 'color-input-group';
+        d.innerHTML = `<label><input type="color" id="color-${f}" value="#000000"> ${colorLabels[f]}</label><input type="text" id="text-${f}" value="">`;
+        g.appendChild(d);
+    });
+}
+
+function buildAnimToggles() {
+    const c = document.getElementById('animToggles');
+    c.innerHTML = '';
+    [{ id: 'shimmer', label: 'Header Shimmer Line' }, { id: 'pulse', label: 'Logo Pulse Ring' }, { id: 'glow', label: 'Background Glow Effects' }, { id: 'sections', label: 'Section Fade Animation' }].forEach(a => {
+        const d = document.createElement('div');
+        d.className = 'animation-toggle';
+        d.innerHTML = `<span>${a.label}</span><label class="toggle-switch"><input type="checkbox" id="anim-${a.id}" checked><span class="toggle-slider"></span></label>`;
+        c.appendChild(d);
+    });
+}
+
+function moveItem(id, dir) {
+    // Find which array contains this item
+    let arr = layout.prefs.includes(id) ? 'prefs' : 'adv';
+    let idx = layout[arr].indexOf(id);
+    
+    if (dir === 'up' && idx > 0) {
+        // Move up within same array
+        [layout[arr][idx-1], layout[arr][idx]] = [layout[arr][idx], layout[arr][idx-1]];
+    } else if (dir === 'down' && idx < layout[arr].length - 1) {
+        // Move down within same array
+        [layout[arr][idx], layout[arr][idx+1]] = [layout[arr][idx+1], layout[arr][idx]];
+    } else if (dir === 'left' && arr === 'adv') {
+        // Move from advanced to preferences (at the end)
+        layout.adv.splice(idx, 1);
+        layout.prefs.push(id);
+    } else if (dir === 'right' && arr === 'prefs') {
+        // Move from preferences to advanced (at the end)
+        layout.prefs.splice(idx, 1);
+        layout.adv.push(id);
+    }
+    
+    renderLayout();
+    updatePreview();
+}
+
+function renderLayout() {
+    const prefsZone = document.getElementById('prefsZone');
+    const advZone = document.getElementById('advZone');
+    prefsZone.innerHTML = '';
+    advZone.innerHTML = '';
+    
+    layout.prefs.forEach((id, idx) => {
+        const s = allSettings.find(x => x.id === id);
+        if (s) prefsZone.appendChild(createLayoutItem(s, 'prefs', idx, layout.prefs.length));
+    });
+    
+    layout.adv.forEach((id, idx) => {
+        const s = allSettings.find(x => x.id === id);
+        if (s) advZone.appendChild(createLayoutItem(s, 'adv', idx, layout.adv.length));
+    });
+}
+
+function createLayoutItem(s, tab, idx, total) {
+    const d = document.createElement('div');
+    d.className = 'layout-item';
+    d.innerHTML = `
+        <i class="fas fa-${s.icon} icon"></i>
+        <span>${s.title}</span>
+        <div class="move-btns">
+            <button class="move-btn" onclick="moveItem('${s.id}','up')" title="Move up" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''}><i class="fas fa-chevron-up"></i></button>
+            <button class="move-btn" onclick="moveItem('${s.id}','down')" title="Move down" ${idx === total-1 ? 'disabled style="opacity:0.3"' : ''}><i class="fas fa-chevron-down"></i></button>
+            <button class="move-btn" onclick="moveItem('${s.id}','${tab === 'prefs' ? 'right' : 'left'}')" title="Move to ${tab === 'prefs' ? 'Advanced' : 'Preferences'}"><i class="fas fa-arrow-${tab === 'prefs' ? 'right' : 'left'}"></i></button>
+        </div>
+    `;
+    return d;
+}
+
+function renderPreviewSections() {
+    const pc = document.getElementById('prefsContent');
+    const ac = document.getElementById('advContent');
+    const anim = document.getElementById('anim-sections').checked;
+    pc.innerHTML = '';
+    ac.innerHTML = '';
+    layout.prefs.forEach((id, i) => { const s = allSettings.find(x => x.id === id); if (s) pc.appendChild(createPreviewSection(s, anim, i)); });
+    layout.adv.forEach((id, i) => { const s = allSettings.find(x => x.id === id); if (s) ac.appendChild(createPreviewSection(s, anim, i)); });
+}
+
+function createPreviewSection(s, anim, i) {
+    const d = document.createElement('div');
+    d.className = 'p-section' + (anim ? ' anim' : '');
+    d.style.animationDelay = (0.05 + i * 0.05) + 's';
+    d.innerHTML = `<div class="p-sec-header"><div class="p-sec-icon"><i class="fas fa-${s.icon}"></i></div><div class="p-sec-title">${s.title}</div></div><div class="p-card"><div class="p-row"><div><div class="p-label">Example Setting</div><div class="p-desc">Setting description</div></div><div class="p-toggle"></div></div></div>`;
+    return d;
+}
+
+function updatePreview() {
+    const box = document.getElementById('previewBox');
+    const submitBox = document.getElementById('submitBox');
+    const vars = {};
+    colorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
+    vars.borderRadius = document.getElementById('borderRadius').value;
+    vars.fontFamily = document.getElementById('fontFamily').value;
+    const s1 = document.getElementById('text-shimmer1').value;
+    const s2 = document.getElementById('text-shimmer2').value;
+    const g1 = isHex(vars.accentPrimary) ? hexToRgba(vars.accentPrimary, 0.08) : 'rgba(255,51,102,0.08)';
+    const g2 = isHex(vars.accentSecondary) ? hexToRgba(vars.accentSecondary, 0.06) : 'rgba(124,58,237,0.06)';
+    
+    [box, submitBox].forEach(el => {
+        el.style.setProperty('--bg1', vars.bgPrimary);
+        el.style.setProperty('--bg2', vars.bgSecondary);
+        el.style.setProperty('--bg3', vars.bgTertiary);
+        el.style.setProperty('--acc1', vars.accentPrimary);
+        el.style.setProperty('--acc2', vars.accentSecondary);
+        el.style.setProperty('--green', vars.accentGreen);
+        el.style.setProperty('--txt1', vars.textPrimary);
+        el.style.setProperty('--txt2', vars.textSecondary);
+        el.style.setProperty('--txt3', vars.textMuted);
+        el.style.setProperty('--brd', vars.borderColor);
+        el.style.setProperty('--br', vars.borderRadius);
+        el.style.setProperty('--ff', vars.fontFamily);
+        el.style.setProperty('--glow1', g1);
+        el.style.setProperty('--glow2', g2);
+    });
+    
+    const shimmer = document.getElementById('anim-shimmer').checked;
+    const pulse = document.getElementById('anim-pulse').checked;
+    const glow = document.getElementById('anim-glow').checked;
+    
+    document.getElementById('pHeader').classList.toggle('shimmer', shimmer);
+    document.getElementById('submitHeader').classList.toggle('shimmer', shimmer);
+    document.getElementById('logoRing').classList.toggle('pulse', pulse);
+    document.getElementById('logoRing').style.display = pulse ? 'block' : 'none';
+    box.classList.toggle('has-glow', glow);
+    
+    document.getElementById('shimmerPrev').style.background = `linear-gradient(90deg, ${s1}, ${s2}, ${s1})`;
+    document.getElementById('shimmerPrev').style.backgroundSize = '200% 100%';
+    
+    let style = document.getElementById('shimmerStyle');
+    if (!style) { style = document.createElement('style'); style.id = 'shimmerStyle'; document.head.appendChild(style); }
+    style.textContent = `.p-header.shimmer::before, .submit-header.shimmer::before { background: linear-gradient(90deg, ${s1}, ${s2}, ${s1}) !important; background-size: 200% 100% !important; }`;
+    
+    const bgEl = document.getElementById('previewBg');
+    if (bgImage.url) { bgEl.style.backgroundImage = `url(${bgImage.url})`; bgEl.style.opacity = bgImage.opacity / 100; bgEl.style.display = 'block'; }
+    else { bgEl.style.display = 'none'; }
+    
+    renderPreviewSections();
+}
+
+function loadTemplate(id) {
+    const t = THEMES[id];
+    if (!t) return;
+    document.getElementById('themeName').value = t.name + ' (Custom)';
+    colorFields.forEach(f => { const v = t.vars[f]; document.getElementById('text-' + f).value = v; if (isHex(v)) document.getElementById('color-' + f).value = v; });
+    document.getElementById('text-shimmer1').value = t.vars.shimmerColor1 || t.vars.accentPrimary;
+    document.getElementById('text-shimmer2').value = t.vars.shimmerColor2 || t.vars.accentSecondary;
+    if (isHex(t.vars.shimmerColor1)) document.getElementById('color-shimmer1').value = t.vars.shimmerColor1;
+    if (isHex(t.vars.shimmerColor2)) document.getElementById('color-shimmer2').value = t.vars.shimmerColor2;
+    document.getElementById('borderRadius').value = t.vars.borderRadius;
+    document.getElementById('fontFamily').value = t.vars.fontFamily;
+    document.getElementById('anim-shimmer').checked = t.animations.shimmer;
+    document.getElementById('anim-pulse').checked = t.animations.pulse;
+    document.getElementById('anim-glow').checked = t.animations.glow;
+    document.getElementById('anim-sections').checked = t.animations.sections;
+    bgImage = { url: '', opacity: 15, size: 'cover' };
+    document.getElementById('bgPreview').innerHTML = '<span class="placeholder"><i class="fas fa-image"></i> No image</span>';
+    document.getElementById('bgPreview').classList.remove('has-img');
+    document.getElementById('clearImg').style.display = 'none';
+    document.getElementById('bgUrl').value = '';
+    document.getElementById('bgOpacity').value = 15;
+    document.getElementById('opacityVal').textContent = '15%';
+    layout = { prefs: ['skip','autoSkip','playback','display','appearance','defaults'], adv: ['hotkeys','aniskip','timing','behavior','network'] };
+    renderLayout();
+    updatePreview();
+}
+
+function getThemeData() {
+    const vars = {};
+    colorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
+    vars.borderRadius = document.getElementById('borderRadius').value;
+    vars.fontFamily = document.getElementById('fontFamily').value;
+    vars.shimmerColor1 = document.getElementById('text-shimmer1').value;
+    vars.shimmerColor2 = document.getElementById('text-shimmer2').value;
+    vars.accentGlow = isHex(vars.accentPrimary) ? hexToRgba(vars.accentPrimary, 0.35) : 'rgba(255,51,102,0.35)';
+    const data = { name: document.getElementById('themeName').value || 'Custom Theme', vars, animations: { shimmer: document.getElementById('anim-shimmer').checked, pulse: document.getElementById('anim-pulse').checked, glow: document.getElementById('anim-glow').checked, sections: document.getElementById('anim-sections').checked }, settingsLayout: layout };
+    if (bgImage.url) data.backgroundImage = { ...bgImage };
+    return data;
+}
+
+function exportTheme() { navigator.clipboard.writeText(JSON.stringify(getThemeData(), null, 2)).then(() => toast('Theme copied!')).catch(() => toast('Failed', true)); }
+function copyCode() { exportTheme(); }
+function importTheme() { document.getElementById('importModal').classList.add('active'); document.getElementById('importData').value = ''; }
+function closeModal() { document.getElementById('importModal').classList.remove('active'); }
+
+function doImport() {
+    const inp = document.getElementById('importData').value.trim();
+    if (!inp) { toast('Paste data', true); return; }
+    try {
+        const d = JSON.parse(inp);
+        if (!d.vars) throw new Error('Invalid format');
+        if (d.name) document.getElementById('themeName').value = d.name;
+        colorFields.forEach(f => { if (d.vars[f]) { document.getElementById('text-' + f).value = d.vars[f]; if (isHex(d.vars[f])) document.getElementById('color-' + f).value = d.vars[f]; } });
+        if (d.vars.shimmerColor1) { document.getElementById('text-shimmer1').value = d.vars.shimmerColor1; if (isHex(d.vars.shimmerColor1)) document.getElementById('color-shimmer1').value = d.vars.shimmerColor1; }
+        if (d.vars.shimmerColor2) { document.getElementById('text-shimmer2').value = d.vars.shimmerColor2; if (isHex(d.vars.shimmerColor2)) document.getElementById('color-shimmer2').value = d.vars.shimmerColor2; }
+        if (d.vars.borderRadius) document.getElementById('borderRadius').value = d.vars.borderRadius;
+        if (d.vars.fontFamily) document.getElementById('fontFamily').value = d.vars.fontFamily;
+        if (d.animations) { document.getElementById('anim-shimmer').checked = d.animations.shimmer !== false; document.getElementById('anim-pulse').checked = d.animations.pulse !== false; document.getElementById('anim-glow').checked = d.animations.glow !== false; document.getElementById('anim-sections').checked = d.animations.sections !== false; }
+        if (d.settingsLayout) { layout = d.settingsLayout; renderLayout(); }
+        if (d.backgroundImage) { bgImage = { ...d.backgroundImage }; document.getElementById('bgPreview').innerHTML = `<img src="${bgImage.url}">`; document.getElementById('bgPreview').classList.add('has-img'); document.getElementById('clearImg').style.display = 'block'; document.getElementById('bgOpacity').value = bgImage.opacity; document.getElementById('opacityVal').textContent = bgImage.opacity + '%'; }
+        updatePreview();
+        closeModal();
+        toast('Imported!');
+    } catch (e) { toast('Invalid: ' + e.message, true); }
+}
+
+function setBgImage(url) { bgImage.url = url; document.getElementById('bgPreview').innerHTML = `<img src="${url}">`; document.getElementById('bgPreview').classList.add('has-img'); document.getElementById('clearImg').style.display = 'block'; updatePreview(); }
+function clearBg() { bgImage.url = ''; document.getElementById('bgPreview').innerHTML = '<span class="placeholder"><i class="fas fa-image"></i> No image</span>'; document.getElementById('bgPreview').classList.remove('has-img'); document.getElementById('clearImg').style.display = 'none'; document.getElementById('bgUrl').value = ''; updatePreview(); }
+
+document.addEventListener('DOMContentLoaded', () => {
+    buildColorGrid();
+    buildAnimToggles();
+    colorFields.forEach(f => { const c = document.getElementById('color-' + f), t = document.getElementById('text-' + f); c.oninput = () => { t.value = c.value; updatePreview(); }; t.oninput = () => { if (isHex(t.value)) c.value = t.value; updatePreview(); }; });
+    ['shimmer1', 'shimmer2'].forEach(f => { const c = document.getElementById('color-' + f), t = document.getElementById('text-' + f); c.oninput = () => { t.value = c.value; updatePreview(); }; t.oninput = () => { if (isHex(t.value)) c.value = t.value; updatePreview(); }; });
+    document.getElementById('borderRadius').oninput = updatePreview;
+    document.getElementById('fontFamily').oninput = updatePreview;
+    document.getElementById('themeName').oninput = updatePreview;
+    ['shimmer', 'pulse', 'glow', 'sections'].forEach(a => document.getElementById('anim-' + a).onchange = updatePreview);
+    document.getElementById('baseTemplate').onchange = e => loadTemplate(e.target.value);
+    document.querySelectorAll('.p-tab').forEach(t => t.onclick = () => { document.querySelectorAll('.p-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); document.getElementById('prefsContent').style.display = t.dataset.t === 'prefs' ? 'block' : 'none'; document.getElementById('advContent').style.display = t.dataset.t === 'adv' ? 'block' : 'none'; });
+    document.getElementById('selectImg').onclick = () => document.getElementById('bgInput').click();
+    document.getElementById('bgInput').onchange = e => { if (e.target.files && e.target.files[0]) { const r = new FileReader(); r.onload = ev => setBgImage(ev.target.result); r.readAsDataURL(e.target.files[0]); } };
+    document.getElementById('bgUrl').onchange = e => { if (e.target.value.trim()) setBgImage(e.target.value.trim()); };
+    document.getElementById('clearImg').onclick = clearBg;
+    document.getElementById('bgOpacity').oninput = e => { bgImage.opacity = parseInt(e.target.value); document.getElementById('opacityVal').textContent = e.target.value + '%'; updatePreview(); };
+    document.getElementById('importModal').onclick = e => { if (e.target.id === 'importModal') closeModal(); };
+    document.onkeydown = e => { if (e.key === 'Escape') closeModal(); };
+    renderLayout();
+    loadTemplate('classic');
+});
+</script>
+</body>
+</html>
