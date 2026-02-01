@@ -23,10 +23,16 @@
         .input-group input[type="text"], .input-group select { width: 100%; padding: 10px 12px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f0f0f5; font-size: 13px; }
         .input-group input:focus, .input-group select:focus { outline: none; border-color: #ff3366; }
         .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .color-input-group { background: #12121a; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
-        .color-input-group label { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; color: #ccc; }
+        .color-input-group { background: #12121a; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); transition: all 0.3s ease; }
+        .color-input-group:hover { border-color: #ff3366; background: #1a1a28; }
+        .color-input-group label { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; color: #ccc; cursor: pointer; }
         .color-input-group input[type="color"] { width: 24px; height: 24px; border: none; border-radius: 4px; cursor: pointer; background: transparent; }
         .color-input-group input[type="text"] { width: 100%; padding: 6px 8px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; color: #f0f0f5; font-size: 11px; font-family: monospace; }
+        .color-input-wrapper { display: flex; gap: 6px; align-items: center; }
+        .rgba-inputs { display: flex; gap: 4px; flex: 1; }
+        .rgba-inputs input { width: 100%; padding: 6px 4px; background: #1a1a25; border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; color: #f0f0f5; font-size: 10px; font-family: monospace; text-align: center; }
+        .rgba-inputs input:focus { border-color: #ff3366; outline: none; }
+        .rgba-label { font-size: 8px; color: #666; text-align: center; margin-top: 2px; }
         .shimmer-preview { height: 4px; border-radius: 2px; margin-top: 10px; background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
         @keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         .animation-toggle { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #12121a; border-radius: 8px; margin-bottom: 10px; }
@@ -69,18 +75,18 @@
         .preview-bg { position: absolute; inset: 0; background-size: cover; background-position: center; pointer-events: none; z-index: 0; display: none; }
         .preview-box.has-glow::before { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, var(--glow1) 0%, transparent 60%); pointer-events: none; }
         .preview-box.has-glow::after { content: ''; position: absolute; bottom: -30%; left: -30%; width: 80%; height: 80%; background: radial-gradient(circle, var(--glow2) 0%, transparent 50%); pointer-events: none; }
-        .p-header { position: relative; background: var(--bg2, #12121a); padding: 10px 12px; border-bottom: 1px solid var(--brd, rgba(255,255,255,0.06)); display: flex; align-items: center; gap: 10px; z-index: 1; }
+        .p-header { position: relative; background: var(--headerBg, var(--bg2, #12121a)); padding: 10px 12px; border-bottom: 1px solid var(--brd, rgba(255,255,255,0.06)); display: flex; align-items: center; gap: 10px; z-index: 1; }
         .p-header.shimmer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
         .p-logo { position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
         .p-logo-ring { position: absolute; inset: 0; border-radius: 12px; background: linear-gradient(135deg, var(--acc1, #ff3366), var(--acc2, #7c3aed)); opacity: 0.2; }
         .p-logo-ring.pulse { animation: pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.05); opacity: 0.3; } }
-        .p-logo-icon { position: relative; width: 32px; height: 32px; background: linear-gradient(135deg, var(--acc1, #ff3366), var(--acc2, #7c3aed)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; }
-        .p-header-text h2 { font-size: 14px; font-weight: 600; }
-        .p-header-text h2 .w { color: #ff3366; }
-        .p-header-text h2 .s { color: #44adf3; }
+        .p-logo-icon { position: relative; width: 32px; height: 32px; background: var(--logoBg, linear-gradient(135deg, var(--acc1, #ff3366), var(--acc2, #7c3aed))); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--logoText, white); }
+        .p-header-text h2 { font-size: 14px; font-weight: 600; color: var(--headerText, var(--txt1, #f0f0f5)); }
+        .p-header-text h2 .w { color: var(--headerAccent1, #ff3366); }
+        .p-header-text h2 .s { color: var(--headerAccent2, #44adf3); }
         .p-header-text h2 .a { color: var(--txt2, #a0a0b8); font-weight: 400; font-size: 12px; }
-        .p-header-text .tag { font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--txt3, #9090a8); }
+        .p-header-text .tag { font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--headerTag, var(--txt3, #9090a8)); }
         .p-close { margin-left: auto; width: 26px; height: 26px; border: none; background: var(--bg3, #1a1a25); border-radius: 6px; color: var(--txt2, #a0a0b8); cursor: pointer; }
         .p-tabs { display: flex; background: var(--bg2, #12121a); border-bottom: 1px solid var(--brd); z-index: 1; position: relative; }
         .p-tab { flex: 1; padding: 10px; background: none; border: none; color: var(--txt2); font-size: 12px; font-weight: 500; cursor: pointer; position: relative; }
@@ -107,15 +113,17 @@
         .p-ver { font-size: 10px; color: var(--txt3); }
         .p-apply { padding: 6px 14px; background: linear-gradient(135deg, var(--acc1), var(--acc2)); border: none; border-radius: 6px; color: white; font-size: 11px; font-weight: 600; cursor: pointer; }
         .submit-box { width: 360px; border-radius: var(--br, 16px); overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); background: var(--bg1, #0a0a0f); color: var(--txt1, #f0f0f5); font-family: var(--ff, 'Space Grotesk', sans-serif); }
-        .submit-header { position: relative; background: var(--bg2, #12121a); padding: 16px 18px; border-bottom: 1px solid var(--brd); display: flex; align-items: center; gap: 14px; }
+        .submit-header { position: relative; background: var(--headerBg, var(--bg2, #12121a)); padding: 16px 18px; border-bottom: 1px solid var(--brd); display: flex; align-items: center; gap: 14px; }
         .submit-header.shimmer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
-        .submit-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--acc1), var(--acc2)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
-        .submit-header-text h3 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+        .submit-icon { width: 44px; height: 44px; background: var(--logoBg, linear-gradient(135deg, var(--acc1), var(--acc2))); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--logoText, white); }
+        .submit-header-text h3 { font-size: 16px; font-weight: 600; color: var(--headerText, var(--txt1)); margin-bottom: 2px; }
         .submit-header-text p { font-size: 12px; color: var(--txt2); }
         .submit-content { padding: 20px 18px; }
         .submit-field { margin-bottom: 16px; }
         .submit-field label { display: block; font-size: 12px; color: var(--txt2); margin-bottom: 8px; }
-        .submit-field input { width: 100%; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--brd); border-radius: 8px; color: var(--txt1); font-size: 14px; }
+        .submit-field-row { display: flex; gap: 8px; }
+        .submit-field input { flex: 1; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--brd); border-radius: 8px; color: var(--txt1); font-size: 14px; }
+        .submit-set-btn { padding: 12px 16px; background: var(--bg3); border: 1px solid var(--brd); border-radius: 8px; color: var(--txt2); font-size: 12px; font-weight: 500; cursor: pointer; }
         .submit-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .submit-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; }
         .submit-btn.cancel { background: var(--bg3); color: var(--txt2); }
@@ -133,6 +141,7 @@
         .toast { position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border-radius: 10px; font-size: 13px; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 1001; }
         .toast.show { transform: translateY(0); opacity: 1; }
         .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        
         @media (max-width: 1200px) { .preview-wrapper { flex-direction: column; } }
         @media (max-width: 900px) { .app-container { flex-direction: column; } .editor-panel { width: 100%; min-width: auto; height: auto; max-height: 50vh; } }
     </style>
@@ -165,15 +174,24 @@
                     <div class="color-grid" id="colorGrid"></div>
                 </div>
                 <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-heading"></i> Header Colors</div>
+                    <div class="color-grid" id="headerColorGrid"></div>
+                </div>
+                <div class="editor-section">
+                    <div class="editor-section-title"><i class="fas fa-paper-plane"></i> Submit Button Colors</div>
+                    <div class="color-grid" id="submitBtnColorGrid"></div>
+                    <div class="submit-btn-preview" id="submitBtnPreview" style="margin-top: 10px; padding: 10px 20px; border-radius: 5px; text-align: center; font-weight: 600; font-size: 14px; cursor: default;">Submit Intro</div>
+                </div>
+                <div class="editor-section">
                     <div class="editor-section-title"><i class="fas fa-wand-magic-sparkles"></i> Shimmer Line Gradient</div>
                     <div class="color-grid">
                         <div class="color-input-group">
                             <label><input type="color" id="color-shimmer1" value="#ff3366"> Gradient Start</label>
-                            <input type="text" id="text-shimmer1" value="#ff3366">
+                            <input type="text" id="text-shimmer1" value="rgba(255,51,102,1)">
                         </div>
                         <div class="color-input-group">
                             <label><input type="color" id="color-shimmer2" value="#7c3aed"> Gradient End</label>
-                            <input type="text" id="text-shimmer2" value="#7c3aed">
+                            <input type="text" id="text-shimmer2" value="rgba(124,58,237,1)">
                         </div>
                     </div>
                     <div class="shimmer-preview" id="shimmerPrev"></div>
@@ -241,13 +259,13 @@
                 <div class="preview-box has-glow" id="previewBox">
                     <div class="preview-bg" id="previewBg"></div>
                     <div class="p-header shimmer" id="pHeader">
-                        <div class="p-logo">
+                        <div class="p-logo" id="pLogo">
                             <div class="p-logo-ring pulse" id="logoRing"></div>
-                            <div class="p-logo-icon">AP</div>
+                            <div class="p-logo-icon" id="logoIcon">AP</div>
                         </div>
                         <div class="p-header-text">
-                            <h2>Ani<span class="w">World</span> & <span class="s">S</span>.to <span class="a">AP</span></h2>
-                            <div class="tag">SKIP INTROS & OUTROS</div>
+                            <h2 id="headerTitle">Ani<span class="w">World</span> & <span class="s">S</span>.to <span class="a">AP</span></h2>
+                            <div class="tag" id="headerTag">SKIP INTROS & OUTROS</div>
                         </div>
                         <button class="p-close">×</button>
                     </div>
@@ -266,20 +284,26 @@
                 </div>
                 <div class="submit-box" id="submitBox">
                     <div class="submit-header shimmer" id="submitHeader">
-                        <div class="submit-icon"><i class="fas fa-upload"></i></div>
+                        <div class="submit-icon" id="submitIcon"><i class="fas fa-upload"></i></div>
                         <div class="submit-header-text">
-                            <h3>Submit Intro Times</h3>
+                            <h3 id="submitTitle">Submit Intro Times</h3>
                             <p>Help the community!</p>
                         </div>
                     </div>
                     <div class="submit-content">
                         <div class="submit-field">
                             <label>Intro Start (seconds)</label>
-                            <input type="text" value="0:00" readonly>
+                            <div class="submit-field-row">
+                                <input type="text" value="0:00" readonly>
+                                <button class="submit-set-btn">Set</button>
+                            </div>
                         </div>
                         <div class="submit-field">
                             <label>Intro End (seconds)</label>
-                            <input type="text" value="1:30" readonly>
+                            <div class="submit-field-row">
+                                <input type="text" value="1:30" readonly>
+                                <button class="submit-set-btn">Set</button>
+                            </div>
                         </div>
                         <div class="submit-buttons">
                             <button class="submit-btn cancel">Cancel</button>
@@ -300,13 +324,20 @@
     <div class="toast" id="toast"></div>
 <script>
 const THEMES = {
-    classic: { name: 'Classic', vars: { bgPrimary: '#0a0a0f', bgSecondary: '#12121a', bgTertiary: '#1a1a25', bgHover: 'rgba(255,255,255,0.02)', accentPrimary: '#ff3366', accentSecondary: '#7c3aed', accentGreen: '#22c55e', textPrimary: '#f0f0f5', textSecondary: '#a0a0b8', textMuted: '#9090a8', borderColor: 'rgba(255,255,255,0.06)', borderLight: 'rgba(255,255,255,0.1)', borderRadius: '16px', fontFamily: "'Space Grotesk',-apple-system,sans-serif", shimmerColor1: '#ff3366', shimmerColor2: '#7c3aed' }, animations: { shimmer: true, pulse: true, glow: true, sections: true } },
-    aniworld: { name: 'AniWorld', vars: { bgPrimary: '#121c22', bgSecondary: '#1a2a33', bgTertiary: '#243743', bgHover: '#2d444f', accentPrimary: '#637cf9', accentSecondary: '#637cf9', accentGreen: '#63d02b', textPrimary: '#e8e8e8', textSecondary: '#c0d4de', textMuted: '#a8c0cc', borderColor: '#2d444f', borderLight: '#3a5565', borderRadius: '12px', fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", shimmerColor1: '#637cf9', shimmerColor2: '#637cf9' }, animations: { shimmer: false, pulse: false, glow: false, sections: false } },
-    yellow: { name: 'Yellow', vars: { bgPrimary: '#2d2a2e', bgSecondary: '#221f22', bgTertiary: '#403e41', bgHover: '#5b595c', accentPrimary: '#ffd866', accentSecondary: '#fc9867', accentGreen: '#a9dc76', textPrimary: '#fcfcfa', textSecondary: '#c1c0c0', textMuted: '#939293', borderColor: '#403e41', borderLight: '#5b595c', borderRadius: '8px', fontFamily: "'JetBrains Mono',monospace,sans-serif", shimmerColor1: '#ffd866', shimmerColor2: '#fc9867' }, animations: { shimmer: true, pulse: false, glow: true, sections: true } }
+    classic: { name: 'Classic', vars: { bgPrimary: 'rgba(10,10,15,1)', bgSecondary: 'rgba(18,18,26,1)', bgTertiary: 'rgba(26,26,37,1)', bgHover: 'rgba(255,255,255,0.02)', accentPrimary: 'rgba(255,51,102,1)', accentSecondary: 'rgba(124,58,237,1)', accentGreen: 'rgba(34,197,94,1)', textPrimary: 'rgba(240,240,245,1)', textSecondary: 'rgba(160,160,184,1)', textMuted: 'rgba(144,144,168,1)', borderColor: 'rgba(255,255,255,0.06)', borderLight: 'rgba(255,255,255,0.1)', borderRadius: '16px', fontFamily: "'Space Grotesk',-apple-system,sans-serif", shimmerColor1: 'rgba(255,51,102,1)', shimmerColor2: 'rgba(124,58,237,1)', headerBg: 'rgba(18,18,26,1)', headerText: 'rgba(240,240,245,1)', headerAccent1: 'rgba(255,51,102,1)', headerAccent2: 'rgba(68,173,243,1)', headerTag: 'rgba(144,144,168,1)', logoBg: 'rgba(255,51,102,1)', logoText: 'rgba(255,255,255,1)', submitBtnBg1: 'rgba(255,51,102,1)', submitBtnBg2: 'rgba(124,58,237,1)', submitBtnText: 'rgba(255,255,255,1)' }, animations: { shimmer: true, pulse: true, glow: true, sections: true } },
+    aniworld: { name: 'AniWorld', vars: { bgPrimary: 'rgba(18,28,34,1)', bgSecondary: 'rgba(26,42,51,1)', bgTertiary: 'rgba(36,55,67,1)', bgHover: 'rgba(45,68,79,1)', accentPrimary: 'rgba(99,124,249,1)', accentSecondary: 'rgba(99,124,249,1)', accentGreen: 'rgba(99,208,43,1)', textPrimary: 'rgba(232,232,232,1)', textSecondary: 'rgba(192,212,222,1)', textMuted: 'rgba(168,192,204,1)', borderColor: 'rgba(45,68,79,1)', borderLight: 'rgba(58,85,101,1)', borderRadius: '12px', fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", shimmerColor1: 'rgba(99,124,249,1)', shimmerColor2: 'rgba(99,124,249,1)', headerBg: 'rgba(26,42,51,1)', headerText: 'rgba(232,232,232,1)', headerAccent1: 'rgba(99,124,249,1)', headerAccent2: 'rgba(68,173,243,1)', headerTag: 'rgba(168,192,204,1)', logoBg: 'rgba(99,124,249,1)', logoText: 'rgba(255,255,255,1)', submitBtnBg1: 'rgba(99,124,249,1)', submitBtnBg2: 'rgba(139,92,246,1)', submitBtnText: 'rgba(255,255,255,1)' }, animations: { shimmer: false, pulse: false, glow: false, sections: false } },
+    yellow: { name: 'Yellow', vars: { bgPrimary: 'rgba(45,42,46,1)', bgSecondary: 'rgba(34,31,34,1)', bgTertiary: 'rgba(64,62,65,1)', bgHover: 'rgba(91,89,92,1)', accentPrimary: 'rgba(255,216,102,1)', accentSecondary: 'rgba(252,152,103,1)', accentGreen: 'rgba(169,220,118,1)', textPrimary: 'rgba(252,252,250,1)', textSecondary: 'rgba(193,192,192,1)', textMuted: 'rgba(147,146,147,1)', borderColor: 'rgba(64,62,65,1)', borderLight: 'rgba(91,89,92,1)', borderRadius: '8px', fontFamily: "'JetBrains Mono',monospace,sans-serif", shimmerColor1: 'rgba(255,216,102,1)', shimmerColor2: 'rgba(252,152,103,1)', headerBg: 'rgba(34,31,34,1)', headerText: 'rgba(252,252,250,1)', headerAccent1: 'rgba(255,216,102,1)', headerAccent2: 'rgba(252,152,103,1)', headerTag: 'rgba(147,146,147,1)', logoBg: 'rgba(255,216,102,1)', logoText: 'rgba(45,42,46,1)', submitBtnBg1: 'rgba(255,216,102,1)', submitBtnBg2: 'rgba(252,152,103,1)', submitBtnText: 'rgba(45,42,46,1)' }, animations: { shimmer: true, pulse: false, glow: true, sections: true } }
 };
 
 const colorFields = ['bgPrimary','bgSecondary','bgTertiary','bgHover','accentPrimary','accentSecondary','accentGreen','textPrimary','textSecondary','textMuted','borderColor','borderLight'];
-const colorLabels = { bgPrimary: 'Background', bgSecondary: 'Secondary BG', bgTertiary: 'Tertiary BG', bgHover: 'Hover BG', accentPrimary: 'Accent Primary', accentSecondary: 'Accent Secondary', accentGreen: 'Success/Toggle', textPrimary: 'Text Primary', textSecondary: 'Text Secondary', textMuted: 'Text Muted', borderColor: 'Border', borderLight: 'Border Light' };
+const colorLabels = { bgPrimary: 'Background', bgSecondary: 'Cards BG', bgTertiary: 'Icons BG', bgHover: 'Hover BG', accentPrimary: 'Accent Primary', accentSecondary: 'Accent Secondary', accentGreen: 'Toggle On', textPrimary: 'Text Primary', textSecondary: 'Text Secondary', textMuted: 'Text Muted', borderColor: 'Border', borderLight: 'Border Light' };
+
+const headerColorFields = ['headerBg', 'headerText', 'headerAccent1', 'headerAccent2', 'headerTag', 'logoBg', 'logoText'];
+const headerColorLabels = { headerBg: 'Header Background', headerText: 'Header Title', headerAccent1: 'Title "World"', headerAccent2: 'Title "S"', headerTag: 'Header Tag', logoBg: 'Logo Background', logoText: 'Logo Text' };
+
+const submitBtnColorFields = ['submitBtnBg1', 'submitBtnBg2', 'submitBtnText'];
+const submitBtnColorLabels = { submitBtnBg1: 'Button Gradient 1', submitBtnBg2: 'Button Gradient 2', submitBtnText: 'Button Text' };
+
 const allSettings = [
     { id: 'skip', icon: 'clock', title: 'Skip Settings' },
     { id: 'autoSkip', icon: 'forward', title: 'Auto Skip' },
@@ -324,8 +355,51 @@ const allSettings = [
 let layout = { prefs: ['skip','autoSkip','playback','display','appearance','defaults'], adv: ['hotkeys','aniskip','timing','behavior','network'] };
 let bgImage = { url: '', opacity: 15, size: 'cover' };
 
-function hexToRgba(h, a) { if (!h || !h.startsWith('#')) return h; const r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
+// Color conversion utilities
+function hexToRgba(h, a = 1) {
+    if (!h || !h.startsWith('#')) return h;
+    const r = parseInt(h.slice(1,3),16);
+    const g = parseInt(h.slice(3,5),16);
+    const b = parseInt(h.slice(5,7),16);
+    return `rgba(${r},${g},${b},${a})`;
+}
+
+function rgbaToHex(rgba) {
+    const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (!match) return '#000000';
+    const r = parseInt(match[1]).toString(16).padStart(2, '0');
+    const g = parseInt(match[2]).toString(16).padStart(2, '0');
+    const b = parseInt(match[3]).toString(16).padStart(2, '0');
+    return `#${r}${g}${b}`;
+}
+
+function parseRgba(str) {
+    const match = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+    if (match) {
+        return {
+            r: parseInt(match[1]),
+            g: parseInt(match[2]),
+            b: parseInt(match[3]),
+            a: match[4] !== undefined ? parseFloat(match[4]) : 1
+        };
+    }
+    // Try hex
+    if (str.startsWith('#')) {
+        const r = parseInt(str.slice(1,3),16);
+        const g = parseInt(str.slice(3,5),16);
+        const b = parseInt(str.slice(5,7),16);
+        return { r, g, b, a: 1 };
+    }
+    return { r: 0, g: 0, b: 0, a: 1 };
+}
+
+function formatRgba(r, g, b, a) {
+    return `rgba(${r},${g},${b},${a})`;
+}
+
 function isHex(s) { return /^#[0-9A-Fa-f]{6}$/.test(s); }
+function isRgba(s) { return /^rgba?\(\d+,\s*\d+,\s*\d+/.test(s); }
+
 function toast(m, e) { const t = document.getElementById('toast'); t.textContent = m; t.className = 'toast' + (e ? ' error' : '') + ' show'; setTimeout(() => t.classList.remove('show'), 3000); }
 
 function buildColorGrid() {
@@ -334,7 +408,38 @@ function buildColorGrid() {
     colorFields.forEach(f => {
         const d = document.createElement('div');
         d.className = 'color-input-group';
-        d.innerHTML = `<label><input type="color" id="color-${f}" value="#000000"> ${colorLabels[f]}</label><input type="text" id="text-${f}" value="">`;
+        d.innerHTML = `
+            <label><input type="color" id="color-${f}" value="#000000"> ${colorLabels[f]}</label>
+            <input type="text" id="text-${f}" value="" placeholder="rgba(0,0,0,1)">
+        `;
+        g.appendChild(d);
+    });
+}
+
+function buildHeaderColorGrid() {
+    const g = document.getElementById('headerColorGrid');
+    g.innerHTML = '';
+    headerColorFields.forEach(f => {
+        const d = document.createElement('div');
+        d.className = 'color-input-group';
+        d.innerHTML = `
+            <label><input type="color" id="color-${f}" value="#000000"> ${headerColorLabels[f]}</label>
+            <input type="text" id="text-${f}" value="" placeholder="rgba(0,0,0,1)">
+        `;
+        g.appendChild(d);
+    });
+}
+
+function buildSubmitBtnColorGrid() {
+    const g = document.getElementById('submitBtnColorGrid');
+    g.innerHTML = '';
+    submitBtnColorFields.forEach(f => {
+        const d = document.createElement('div');
+        d.className = 'color-input-group';
+        d.innerHTML = `
+            <label><input type="color" id="color-${f}" value="#000000"> ${submitBtnColorLabels[f]}</label>
+            <input type="text" id="text-${f}" value="" placeholder="rgba(0,0,0,1)">
+        `;
         g.appendChild(d);
     });
 }
@@ -351,22 +456,17 @@ function buildAnimToggles() {
 }
 
 function moveItem(id, dir) {
-    // Find which array contains this item
     let arr = layout.prefs.includes(id) ? 'prefs' : 'adv';
     let idx = layout[arr].indexOf(id);
     
     if (dir === 'up' && idx > 0) {
-        // Move up within same array
         [layout[arr][idx-1], layout[arr][idx]] = [layout[arr][idx], layout[arr][idx-1]];
     } else if (dir === 'down' && idx < layout[arr].length - 1) {
-        // Move down within same array
         [layout[arr][idx], layout[arr][idx+1]] = [layout[arr][idx+1], layout[arr][idx]];
     } else if (dir === 'left' && arr === 'adv') {
-        // Move from advanced to preferences (at the end)
         layout.adv.splice(idx, 1);
         layout.prefs.push(id);
     } else if (dir === 'right' && arr === 'prefs') {
-        // Move from preferences to advanced (at the end)
         layout.prefs.splice(idx, 1);
         layout.adv.push(id);
     }
@@ -429,13 +529,31 @@ function updatePreview() {
     const box = document.getElementById('previewBox');
     const submitBox = document.getElementById('submitBox');
     const vars = {};
+    
+    // Get main color fields
     colorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
+    
+    // Get header color fields
+    headerColorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
+    
+    // Get submit button color fields
+    submitBtnColorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
+    
     vars.borderRadius = document.getElementById('borderRadius').value;
     vars.fontFamily = document.getElementById('fontFamily').value;
     const s1 = document.getElementById('text-shimmer1').value;
     const s2 = document.getElementById('text-shimmer2').value;
-    const g1 = isHex(vars.accentPrimary) ? hexToRgba(vars.accentPrimary, 0.08) : 'rgba(255,51,102,0.08)';
-    const g2 = isHex(vars.accentSecondary) ? hexToRgba(vars.accentSecondary, 0.06) : 'rgba(124,58,237,0.06)';
+    
+    // Calculate glow colors
+    const acc1Parsed = parseRgba(vars.accentPrimary);
+    const acc2Parsed = parseRgba(vars.accentSecondary);
+    const g1 = formatRgba(acc1Parsed.r, acc1Parsed.g, acc1Parsed.b, 0.08);
+    const g2 = formatRgba(acc2Parsed.r, acc2Parsed.g, acc2Parsed.b, 0.06);
+    
+    // Build logo gradient
+    const logoBgParsed = parseRgba(vars.logoBg || vars.accentPrimary);
+    const logoBg2Parsed = parseRgba(vars.accentSecondary);
+    const logoGradient = `linear-gradient(135deg, ${vars.logoBg || vars.accentPrimary}, ${vars.accentSecondary})`;
     
     [box, submitBox].forEach(el => {
         el.style.setProperty('--bg1', vars.bgPrimary);
@@ -452,7 +570,26 @@ function updatePreview() {
         el.style.setProperty('--ff', vars.fontFamily);
         el.style.setProperty('--glow1', g1);
         el.style.setProperty('--glow2', g2);
+        
+        // Header colors
+        el.style.setProperty('--headerBg', vars.headerBg || vars.bgSecondary);
+        el.style.setProperty('--headerText', vars.headerText || vars.textPrimary);
+        el.style.setProperty('--headerAccent1', vars.headerAccent1 || '#ff3366');
+        el.style.setProperty('--headerAccent2', vars.headerAccent2 || '#44adf3');
+        el.style.setProperty('--headerTag', vars.headerTag || vars.textMuted);
+        el.style.setProperty('--logoBg', logoGradient);
+        el.style.setProperty('--logoText', vars.logoText || 'white');
     });
+    
+    // Update submit button preview
+    const submitBtnPreview = document.getElementById('submitBtnPreview');
+    const btnBg1 = vars.submitBtnBg1 || vars.accentPrimary;
+    const btnBg2 = vars.submitBtnBg2 || vars.accentSecondary;
+    const btnText = vars.submitBtnText || 'rgba(255,255,255,1)';
+    submitBtnPreview.style.background = `linear-gradient(135deg, ${btnBg1}, ${btnBg2})`;
+    submitBtnPreview.style.color = btnText;
+    submitBtnPreview.style.border = '2px solid rgba(255,255,255,0.2)';
+    submitBtnPreview.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
     
     const shimmer = document.getElementById('anim-shimmer').checked;
     const pulse = document.getElementById('anim-pulse').checked;
@@ -482,11 +619,40 @@ function loadTemplate(id) {
     const t = THEMES[id];
     if (!t) return;
     document.getElementById('themeName').value = t.name + ' (Custom)';
-    colorFields.forEach(f => { const v = t.vars[f]; document.getElementById('text-' + f).value = v; if (isHex(v)) document.getElementById('color-' + f).value = v; });
+    
+    // Load main color fields
+    colorFields.forEach(f => {
+        const v = t.vars[f];
+        document.getElementById('text-' + f).value = v;
+        const hex = rgbaToHex(v);
+        document.getElementById('color-' + f).value = hex;
+    });
+    
+    // Load header color fields
+    headerColorFields.forEach(f => {
+        const v = t.vars[f] || '';
+        document.getElementById('text-' + f).value = v;
+        if (v) {
+            const hex = rgbaToHex(v);
+            document.getElementById('color-' + f).value = hex;
+        }
+    });
+    
+    // Load submit button color fields
+    submitBtnColorFields.forEach(f => {
+        const v = t.vars[f] || '';
+        document.getElementById('text-' + f).value = v;
+        if (v) {
+            const hex = rgbaToHex(v);
+            document.getElementById('color-' + f).value = hex;
+        }
+    });
+    
     document.getElementById('text-shimmer1').value = t.vars.shimmerColor1 || t.vars.accentPrimary;
     document.getElementById('text-shimmer2').value = t.vars.shimmerColor2 || t.vars.accentSecondary;
-    if (isHex(t.vars.shimmerColor1)) document.getElementById('color-shimmer1').value = t.vars.shimmerColor1;
-    if (isHex(t.vars.shimmerColor2)) document.getElementById('color-shimmer2').value = t.vars.shimmerColor2;
+    document.getElementById('color-shimmer1').value = rgbaToHex(t.vars.shimmerColor1 || t.vars.accentPrimary);
+    document.getElementById('color-shimmer2').value = rgbaToHex(t.vars.shimmerColor2 || t.vars.accentSecondary);
+    
     document.getElementById('borderRadius').value = t.vars.borderRadius;
     document.getElementById('fontFamily').value = t.vars.fontFamily;
     document.getElementById('anim-shimmer').checked = t.animations.shimmer;
@@ -508,17 +674,37 @@ function loadTemplate(id) {
 function getThemeData() {
     const vars = {};
     colorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
+    headerColorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
+    submitBtnColorFields.forEach(f => vars[f] = document.getElementById('text-' + f).value);
     vars.borderRadius = document.getElementById('borderRadius').value;
     vars.fontFamily = document.getElementById('fontFamily').value;
     vars.shimmerColor1 = document.getElementById('text-shimmer1').value;
     vars.shimmerColor2 = document.getElementById('text-shimmer2').value;
-    vars.accentGlow = isHex(vars.accentPrimary) ? hexToRgba(vars.accentPrimary, 0.35) : 'rgba(255,51,102,0.35)';
-    const data = { name: document.getElementById('themeName').value || 'Custom Theme', vars, animations: { shimmer: document.getElementById('anim-shimmer').checked, pulse: document.getElementById('anim-pulse').checked, glow: document.getElementById('anim-glow').checked, sections: document.getElementById('anim-sections').checked }, settingsLayout: layout };
+    
+    const acc1Parsed = parseRgba(vars.accentPrimary);
+    vars.accentGlow = formatRgba(acc1Parsed.r, acc1Parsed.g, acc1Parsed.b, 0.35);
+    
+    const data = { 
+        name: document.getElementById('themeName').value || 'Custom Theme', 
+        vars, 
+        animations: { 
+            shimmer: document.getElementById('anim-shimmer').checked, 
+            pulse: document.getElementById('anim-pulse').checked, 
+            glow: document.getElementById('anim-glow').checked, 
+            sections: document.getElementById('anim-sections').checked 
+        }, 
+        settingsLayout: layout 
+    };
     if (bgImage.url) data.backgroundImage = { ...bgImage };
     return data;
 }
 
-function exportTheme() { navigator.clipboard.writeText(JSON.stringify(getThemeData(), null, 2)).then(() => toast('Theme copied!')).catch(() => toast('Failed', true)); }
+function exportTheme() { 
+    navigator.clipboard.writeText(JSON.stringify(getThemeData(), null, 2))
+        .then(() => toast('Theme copied!'))
+        .catch(() => toast('Failed', true)); 
+}
+
 function copyCode() { exportTheme(); }
 function importTheme() { document.getElementById('importModal').classList.add('active'); document.getElementById('importData').value = ''; }
 function closeModal() { document.getElementById('importModal').classList.remove('active'); }
@@ -530,39 +716,187 @@ function doImport() {
         const d = JSON.parse(inp);
         if (!d.vars) throw new Error('Invalid format');
         if (d.name) document.getElementById('themeName').value = d.name;
-        colorFields.forEach(f => { if (d.vars[f]) { document.getElementById('text-' + f).value = d.vars[f]; if (isHex(d.vars[f])) document.getElementById('color-' + f).value = d.vars[f]; } });
-        if (d.vars.shimmerColor1) { document.getElementById('text-shimmer1').value = d.vars.shimmerColor1; if (isHex(d.vars.shimmerColor1)) document.getElementById('color-shimmer1').value = d.vars.shimmerColor1; }
-        if (d.vars.shimmerColor2) { document.getElementById('text-shimmer2').value = d.vars.shimmerColor2; if (isHex(d.vars.shimmerColor2)) document.getElementById('color-shimmer2').value = d.vars.shimmerColor2; }
+        
+        // Import main color fields
+        colorFields.forEach(f => { 
+            if (d.vars[f]) { 
+                document.getElementById('text-' + f).value = d.vars[f]; 
+                document.getElementById('color-' + f).value = rgbaToHex(d.vars[f]); 
+            } 
+        });
+        
+        // Import header color fields
+        headerColorFields.forEach(f => { 
+            if (d.vars[f]) { 
+                document.getElementById('text-' + f).value = d.vars[f]; 
+                document.getElementById('color-' + f).value = rgbaToHex(d.vars[f]); 
+            } 
+        });
+        
+        // Import submit button color fields
+        submitBtnColorFields.forEach(f => { 
+            if (d.vars[f]) { 
+                document.getElementById('text-' + f).value = d.vars[f]; 
+                document.getElementById('color-' + f).value = rgbaToHex(d.vars[f]); 
+            } 
+        });
+        
+        if (d.vars.shimmerColor1) { 
+            document.getElementById('text-shimmer1').value = d.vars.shimmerColor1; 
+            document.getElementById('color-shimmer1').value = rgbaToHex(d.vars.shimmerColor1); 
+        }
+        if (d.vars.shimmerColor2) { 
+            document.getElementById('text-shimmer2').value = d.vars.shimmerColor2; 
+            document.getElementById('color-shimmer2').value = rgbaToHex(d.vars.shimmerColor2); 
+        }
         if (d.vars.borderRadius) document.getElementById('borderRadius').value = d.vars.borderRadius;
         if (d.vars.fontFamily) document.getElementById('fontFamily').value = d.vars.fontFamily;
-        if (d.animations) { document.getElementById('anim-shimmer').checked = d.animations.shimmer !== false; document.getElementById('anim-pulse').checked = d.animations.pulse !== false; document.getElementById('anim-glow').checked = d.animations.glow !== false; document.getElementById('anim-sections').checked = d.animations.sections !== false; }
+        if (d.animations) { 
+            document.getElementById('anim-shimmer').checked = d.animations.shimmer !== false; 
+            document.getElementById('anim-pulse').checked = d.animations.pulse !== false; 
+            document.getElementById('anim-glow').checked = d.animations.glow !== false; 
+            document.getElementById('anim-sections').checked = d.animations.sections !== false; 
+        }
         if (d.settingsLayout) { layout = d.settingsLayout; renderLayout(); }
-        if (d.backgroundImage) { bgImage = { ...d.backgroundImage }; document.getElementById('bgPreview').innerHTML = `<img src="${bgImage.url}">`; document.getElementById('bgPreview').classList.add('has-img'); document.getElementById('clearImg').style.display = 'block'; document.getElementById('bgOpacity').value = bgImage.opacity; document.getElementById('opacityVal').textContent = bgImage.opacity + '%'; }
+        if (d.backgroundImage) { 
+            bgImage = { ...d.backgroundImage }; 
+            document.getElementById('bgPreview').innerHTML = `<img src="${bgImage.url}">`; 
+            document.getElementById('bgPreview').classList.add('has-img'); 
+            document.getElementById('clearImg').style.display = 'block'; 
+            document.getElementById('bgOpacity').value = bgImage.opacity; 
+            document.getElementById('opacityVal').textContent = bgImage.opacity + '%'; 
+        }
         updatePreview();
         closeModal();
         toast('Imported!');
     } catch (e) { toast('Invalid: ' + e.message, true); }
 }
 
-function setBgImage(url) { bgImage.url = url; document.getElementById('bgPreview').innerHTML = `<img src="${url}">`; document.getElementById('bgPreview').classList.add('has-img'); document.getElementById('clearImg').style.display = 'block'; updatePreview(); }
-function clearBg() { bgImage.url = ''; document.getElementById('bgPreview').innerHTML = '<span class="placeholder"><i class="fas fa-image"></i> No image</span>'; document.getElementById('bgPreview').classList.remove('has-img'); document.getElementById('clearImg').style.display = 'none'; document.getElementById('bgUrl').value = ''; updatePreview(); }
+function setBgImage(url) { 
+    bgImage.url = url; 
+    document.getElementById('bgPreview').innerHTML = `<img src="${url}">`; 
+    document.getElementById('bgPreview').classList.add('has-img'); 
+    document.getElementById('clearImg').style.display = 'block'; 
+    updatePreview(); 
+}
+
+function clearBg() { 
+    bgImage.url = ''; 
+    document.getElementById('bgPreview').innerHTML = '<span class="placeholder"><i class="fas fa-image"></i> No image</span>'; 
+    document.getElementById('bgPreview').classList.remove('has-img'); 
+    document.getElementById('clearImg').style.display = 'none'; 
+    document.getElementById('bgUrl').value = ''; 
+    updatePreview(); 
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     buildColorGrid();
+    buildHeaderColorGrid();
+    buildSubmitBtnColorGrid();
     buildAnimToggles();
-    colorFields.forEach(f => { const c = document.getElementById('color-' + f), t = document.getElementById('text-' + f); c.oninput = () => { t.value = c.value; updatePreview(); }; t.oninput = () => { if (isHex(t.value)) c.value = t.value; updatePreview(); }; });
-    ['shimmer1', 'shimmer2'].forEach(f => { const c = document.getElementById('color-' + f), t = document.getElementById('text-' + f); c.oninput = () => { t.value = c.value; updatePreview(); }; t.oninput = () => { if (isHex(t.value)) c.value = t.value; updatePreview(); }; });
+    
+    // Setup event handlers for main color fields
+    colorFields.forEach(f => { 
+        const c = document.getElementById('color-' + f);
+        const t = document.getElementById('text-' + f); 
+        c.oninput = () => { 
+            t.value = hexToRgba(c.value, 1); 
+            updatePreview(); 
+        }; 
+        t.oninput = () => { 
+            if (isHex(t.value)) {
+                c.value = t.value;
+                t.value = hexToRgba(t.value, 1);
+            } else if (isRgba(t.value)) {
+                c.value = rgbaToHex(t.value);
+            }
+            updatePreview(); 
+        }; 
+    });
+    
+    // Setup event handlers for header color fields
+    headerColorFields.forEach(f => { 
+        const c = document.getElementById('color-' + f);
+        const t = document.getElementById('text-' + f); 
+        c.oninput = () => { 
+            t.value = hexToRgba(c.value, 1); 
+            updatePreview(); 
+        }; 
+        t.oninput = () => { 
+            if (isHex(t.value)) {
+                c.value = t.value;
+                t.value = hexToRgba(t.value, 1);
+            } else if (isRgba(t.value)) {
+                c.value = rgbaToHex(t.value);
+            }
+            updatePreview(); 
+        }; 
+    });
+    
+    // Setup event handlers for submit button color fields
+    submitBtnColorFields.forEach(f => { 
+        const c = document.getElementById('color-' + f);
+        const t = document.getElementById('text-' + f); 
+        c.oninput = () => { 
+            t.value = hexToRgba(c.value, 1); 
+            updatePreview(); 
+        }; 
+        t.oninput = () => { 
+            if (isHex(t.value)) {
+                c.value = t.value;
+                t.value = hexToRgba(t.value, 1);
+            } else if (isRgba(t.value)) {
+                c.value = rgbaToHex(t.value);
+            }
+            updatePreview(); 
+        }; 
+    });
+    
+    // Setup shimmer color handlers
+    ['shimmer1', 'shimmer2'].forEach(f => { 
+        const c = document.getElementById('color-' + f);
+        const t = document.getElementById('text-' + f); 
+        c.oninput = () => { 
+            t.value = hexToRgba(c.value, 1); 
+            updatePreview(); 
+        }; 
+        t.oninput = () => { 
+            if (isHex(t.value)) {
+                c.value = t.value;
+                t.value = hexToRgba(t.value, 1);
+            } else if (isRgba(t.value)) {
+                c.value = rgbaToHex(t.value);
+            }
+            updatePreview(); 
+        }; 
+    });
+    
     document.getElementById('borderRadius').oninput = updatePreview;
     document.getElementById('fontFamily').oninput = updatePreview;
     document.getElementById('themeName').oninput = updatePreview;
     ['shimmer', 'pulse', 'glow', 'sections'].forEach(a => document.getElementById('anim-' + a).onchange = updatePreview);
     document.getElementById('baseTemplate').onchange = e => loadTemplate(e.target.value);
-    document.querySelectorAll('.p-tab').forEach(t => t.onclick = () => { document.querySelectorAll('.p-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); document.getElementById('prefsContent').style.display = t.dataset.t === 'prefs' ? 'block' : 'none'; document.getElementById('advContent').style.display = t.dataset.t === 'adv' ? 'block' : 'none'; });
+    document.querySelectorAll('.p-tab').forEach(t => t.onclick = () => { 
+        document.querySelectorAll('.p-tab').forEach(x => x.classList.remove('active')); 
+        t.classList.add('active'); 
+        document.getElementById('prefsContent').style.display = t.dataset.t === 'prefs' ? 'block' : 'none'; 
+        document.getElementById('advContent').style.display = t.dataset.t === 'adv' ? 'block' : 'none'; 
+    });
     document.getElementById('selectImg').onclick = () => document.getElementById('bgInput').click();
-    document.getElementById('bgInput').onchange = e => { if (e.target.files && e.target.files[0]) { const r = new FileReader(); r.onload = ev => setBgImage(ev.target.result); r.readAsDataURL(e.target.files[0]); } };
+    document.getElementById('bgInput').onchange = e => { 
+        if (e.target.files && e.target.files[0]) { 
+            const r = new FileReader(); 
+            r.onload = ev => setBgImage(ev.target.result); 
+            r.readAsDataURL(e.target.files[0]); 
+        } 
+    };
     document.getElementById('bgUrl').onchange = e => { if (e.target.value.trim()) setBgImage(e.target.value.trim()); };
     document.getElementById('clearImg').onclick = clearBg;
-    document.getElementById('bgOpacity').oninput = e => { bgImage.opacity = parseInt(e.target.value); document.getElementById('opacityVal').textContent = e.target.value + '%'; updatePreview(); };
+    document.getElementById('bgOpacity').oninput = e => { 
+        bgImage.opacity = parseInt(e.target.value); 
+        document.getElementById('opacityVal').textContent = e.target.value + '%'; 
+        updatePreview(); 
+    };
     document.getElementById('importModal').onclick = e => { if (e.target.id === 'importModal') closeModal(); };
     document.onkeydown = e => { if (e.key === 'Escape') closeModal(); };
     renderLayout();
